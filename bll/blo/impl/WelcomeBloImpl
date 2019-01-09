@@ -1,0 +1,57 @@
+/**
+ * DailyLoginBloImpl.java
+ *
+ * Copyright(C) 2018 by Fujinet System JSC
+ *
+ * Version 1.00
+ */
+
+package fjn.eplt.bll.blo.impl;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import fjn.eplt.bll.blo.def.IWelcomeBlo;
+import fjn.eplt.bll.eco.WelcomeCourseConverter;
+import fjn.eplt.common.dto.WelcomeCourseDto;
+import fjn.eplt.common.logging.annotation.AutoLog;
+import fjn.eplt.dal.dao.def.ICourseDao;
+import fjn.eplt.dal.entity.Course;
+
+/**
+ * welcome blo
+ */
+@AutoLog
+@Service
+@Transactional(rollbackFor = Exception.class)
+public class WelcomeBloImpl implements
+		IWelcomeBlo {
+
+	@Autowired
+	private ICourseDao iCourseDao;
+
+	@Autowired
+	private WelcomeCourseConverter welcomeCourseEco;
+
+	@Override
+	public List<WelcomeCourseDto> getApprovedCourse() {
+
+		List<Course> listCourse = new ArrayList<>();
+		List<WelcomeCourseDto> listCourseDto = new ArrayList<>();
+
+		listCourse = iCourseDao.getApprovedCourse();
+
+		for (Course course : listCourse) {
+			WelcomeCourseDto courseDto = new WelcomeCourseDto();
+			welcomeCourseEco.convertEntityToDto(course, courseDto);
+			listCourseDto.add(courseDto);
+		}
+
+		return listCourseDto;
+	}
+
+}
